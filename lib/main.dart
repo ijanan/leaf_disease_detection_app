@@ -19,15 +19,21 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: const Color.fromARGB(255, 24, 58, 11),
         hintColor: const Color.fromARGB(255, 28, 69, 31),
-        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme).copyWith(
-          titleLarge: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-          bodyLarge: const TextStyle(fontSize: 16, color: Colors.black87),
-          labelLarge: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          centerTitle: true,
-        ),
+        textTheme: GoogleFonts.montserratTextTheme(Theme.of(context).textTheme)
+            .copyWith(
+              titleLarge: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+              bodyLarge: const TextStyle(fontSize: 16, color: Colors.black87),
+              labelLarge: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+        appBarTheme: const AppBarTheme(elevation: 0, centerTitle: true),
         useMaterial3: true,
       ),
       home: const HomeScreen(),
@@ -97,10 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Colors.green.shade50,
-              Colors.green.shade200,
-            ],
+            colors: [Colors.green.shade50, Colors.green.shade200],
           ),
         ),
         child: Column(
@@ -109,7 +112,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 16.0,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -135,7 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.fromLTRB(24, 40, 24, 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [Theme.of(context).primaryColor, const Color.fromARGB(255, 27, 68, 15)],
+          colors: [
+            Theme.of(context).primaryColor,
+            const Color.fromARGB(255, 27, 68, 15),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -146,14 +155,17 @@ class _HomeScreenState extends State<HomeScreen> {
             spreadRadius: 2,
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
         children: [
           const Icon(Icons.eco, color: Colors.white, size: 32),
           const SizedBox(width: 12),
-          Text('Leaf Disease Detector', style: Theme.of(context).textTheme.titleLarge),
+          Text(
+            'Leaf Disease Detector',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ],
       ),
     );
@@ -180,13 +192,21 @@ class _HomeScreenState extends State<HomeScreen> {
           child: imageBytes != null
               ? ClipRRect(
                   borderRadius: BorderRadius.circular(18),
-                  child: Image.memory(imageBytes, fit: BoxFit.cover, width: double.infinity),
+                  child: Image.memory(
+                    imageBytes,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
                 )
               : Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.cloud_upload_outlined, size: 80, color: Theme.of(context).primaryColor.withAlpha(178)),
+                      Icon(
+                        Icons.cloud_upload_outlined,
+                        size: 80,
+                        color: Theme.of(context).primaryColor.withAlpha(178),
+                      ),
                       const SizedBox(height: 16),
                       Text(
                         'Upload an image to get started',
@@ -222,7 +242,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildButton({required IconData icon, required String label, required VoidCallback onPressed}) {
+  Widget _buildButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+  }) {
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon, size: 28),
@@ -246,7 +270,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (isLoading) {
           return Center(
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+              valueColor: AlwaysStoppedAnimation<Color>(
+                Theme.of(context).primaryColor,
+              ),
             ),
           );
         }
@@ -266,20 +292,28 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.black.withAlpha(26),
                     spreadRadius: 2,
                     blurRadius: 10,
-                  )
+                  ),
                 ],
               ),
               child: Column(
                 children: [
                   Text(
                     'Prediction',
-                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Theme.of(context).primaryColor),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
                     result,
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Theme.of(context).hintColor),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).hintColor,
+                    ),
                   ),
                   const SizedBox(height: 10),
                   ValueListenableBuilder<double?>(
@@ -288,7 +322,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (confidence == null) return const SizedBox.shrink();
                       return Text(
                         'Confidence: ${(confidence * 100).toStringAsFixed(2)}%',
-                        style: const TextStyle(fontSize: 16, color: Colors.black54, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.w500,
+                        ),
                       );
                     },
                   ),
