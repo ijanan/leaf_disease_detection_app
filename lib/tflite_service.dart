@@ -16,12 +16,18 @@ class TFLiteService {
       );
 
       final labelsData = await rootBundle.loadString('assets/labels.txt');
-      _labels = labelsData.split('\n').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+      _labels = labelsData
+          .split('\n')
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
 
       final inputTensor = _interpreter!.getInputTensor(0);
       final outputTensor = _interpreter!.getOutputTensor(0);
-      log('Input tensor: shape=${inputTensor.shape}, type=${inputTensor.type}', name: 'TFLiteService');
-      log('Output tensor: shape=${outputTensor.shape}, type=${outputTensor.type}', name: 'TFLiteService');
+      log('Input tensor: shape=${inputTensor.shape}, type=${inputTensor.type}',
+          name: 'TFLiteService');
+      log('Output tensor: shape=${outputTensor.shape}, type=${outputTensor.type}',
+          name: 'TFLiteService');
 
       log('Model and labels loaded successfully', name: 'TFLiteService');
     } catch (e) {
@@ -40,7 +46,8 @@ class TFLiteService {
 
     final outputTensor = _interpreter!.getOutputTensor(0);
     final outputShape = outputTensor.shape;
-    final int numClasses = (outputShape.length == 1) ? outputShape[0] : outputShape[1];
+    final int numClasses =
+        (outputShape.length == 1) ? outputShape[0] : outputShape[1];
 
     // Output as a batched 2D list: [1, numClasses]
     final output = List.generate(1, (_) => List.filled(numClasses, 0.0));
