@@ -10,11 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Added dependencies required by the project
   google_fonts: ^4.0.3
   image_picker: ^0.8.7+6
   image: ^4.0.17
-  tflite_flutter: ^0.10.0
+  # Use a newer tflite_flutter that is compatible with recent Dart/Flutter SDKs
+  tflite_flutter: ^0.12.1
+  # permission_handler upgraded to v12 to ensure Android v2 embedding compatibility
+  permission_handler: ^12.0.1
 
 dev_dependencies:
   flutter_test:
