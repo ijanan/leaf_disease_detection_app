@@ -90,7 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (!ok) {
           // show immediate message to user
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Model failed to load. Check logs.')));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Model failed to load. Check logs.')));
           }
         }
       }
@@ -105,8 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
             preferredCameraDevice: CameraDevice.rear);
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Could not open camera: ${e.toString()}')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not open camera: ${e.toString()}')));
         return;
       }
       if (pickedFile == null) return;
@@ -166,7 +167,8 @@ class _HomeScreenState extends State<HomeScreen> {
           // tell user how to enable
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Camera permission permanently denied. Open settings to enable.')));
+                content: Text(
+                    'Camera permission permanently denied. Open settings to enable.')));
           }
           openAppSettings();
           return false;
@@ -180,7 +182,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (photos.isPermanentlyDenied) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Photo permission permanently denied. Open settings to enable.')));
+                content: Text(
+                    'Photo permission permanently denied. Open settings to enable.')));
           }
           openAppSettings();
           return false;
@@ -189,7 +192,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (storage.isPermanentlyDenied) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text('Storage permission permanently denied. Open settings to enable.')));
+                content: Text(
+                    'Storage permission permanently denied. Open settings to enable.')));
           }
           openAppSettings();
           return false;
@@ -220,7 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 260,
               height: 260,
               decoration: BoxDecoration(
-                gradient: RadialGradient(colors: [Colors.green.shade100, Colors.green.shade50]),
+                gradient: RadialGradient(
+                    colors: [Colors.green.shade100, Colors.green.shade50]),
                 borderRadius: BorderRadius.circular(200),
               ),
             ),
@@ -232,7 +237,8 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 320,
               height: 320,
               decoration: BoxDecoration(
-                gradient: RadialGradient(colors: [Colors.teal.shade100, Colors.teal.shade50]),
+                gradient: RadialGradient(
+                    colors: [Colors.teal.shade100, Colors.teal.shade50]),
                 borderRadius: BorderRadius.circular(200),
               ),
             ),
@@ -270,17 +276,23 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.camera_alt_outlined, size: 54, color: Colors.green),
+                                        Icon(Icons.camera_alt_outlined,
+                                            size: 54, color: Colors.green),
                                         SizedBox(height: 12),
-                                        Text('Tap the camera to take a photo, or open gallery',
+                                        Text(
+                                            'Tap the camera to take a photo, or open gallery',
                                             textAlign: TextAlign.center,
-                                            style: TextStyle(color: Colors.black54)),
+                                            style: TextStyle(
+                                                color: Colors.black54)),
                                       ],
                                     ),
                                   )
                                 : ClipRRect(
                                     borderRadius: BorderRadius.circular(20),
-                                    child: Image.memory(bytes, fit: BoxFit.cover, width: double.infinity, height: 300),
+                                    child: Image.memory(bytes,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: 300),
                                   ),
                           ),
                         ),
@@ -294,7 +306,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     valueListenable: _isLoading,
                     builder: (context, loading, child) {
                       return Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
                         elevation: 4,
                         child: Padding(
                           padding: const EdgeInsets.all(14),
@@ -302,19 +315,38 @@ class _HomeScreenState extends State<HomeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Text('Result', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                                  const Text('Result',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16)),
                                   if (loading)
-                                    const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                                    const SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2))
                                   else
                                     ValueListenableBuilder<bool>(
                                       valueListenable: _modelLoaded,
                                       builder: (context, loaded, child) {
                                         return Row(children: [
-                                          Icon(loaded ? Icons.check_circle : Icons.hourglass_bottom, color: loaded ? Colors.green : Colors.orange),
+                                          Icon(
+                                              loaded
+                                                  ? Icons.check_circle
+                                                  : Icons.hourglass_bottom,
+                                              color: loaded
+                                                  ? Colors.green
+                                                  : Colors.orange),
                                           const SizedBox(width: 6),
-                                          Text(loaded ? 'Model ready' : 'Loading model', style: const TextStyle(fontSize: 12)),
+                                          Text(
+                                              loaded
+                                                  ? 'Model ready'
+                                                  : 'Loading model',
+                                              style: const TextStyle(
+                                                  fontSize: 12)),
                                         ]);
                                       },
                                     ),
@@ -327,23 +359,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                   // If the model isn't loaded and the service has a
                                   // last load error, show that to the user so they
                                   // don't just see a generic 'Could not classify'.
-                                  if (!_modelLoaded.value && _tfliteService.lastLoadError != null) {
-                                    return Text('Model load error: ${_tfliteService.lastLoadError}', style: const TextStyle(fontSize: 16, color: Colors.red));
+                                  if (!_modelLoaded.value &&
+                                      _tfliteService.lastLoadError != null) {
+                                    return Text(
+                                        'Model load error: ${_tfliteService.lastLoadError}',
+                                        style: const TextStyle(
+                                            fontSize: 16, color: Colors.red));
                                   }
-                                  return Text(result ?? 'No prediction yet', style: const TextStyle(fontSize: 18));
+                                  return Text(result ?? 'No prediction yet',
+                                      style: const TextStyle(fontSize: 18));
                                 },
                               ),
                               const SizedBox(height: 12),
                               ValueListenableBuilder<double?>(
                                 valueListenable: _confidence,
                                 builder: (context, conf, child) {
-                                  final pct = conf == null ? 0.0 : (conf.clamp(0.0, 1.0));
+                                  final pct = conf == null
+                                      ? 0.0
+                                      : (conf.clamp(0.0, 1.0));
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      ClipRRect(borderRadius: BorderRadius.circular(8), child: LinearProgressIndicator(value: pct, minHeight: 8)),
+                                      ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          child: LinearProgressIndicator(
+                                              value: pct, minHeight: 8)),
                                       const SizedBox(height: 6),
-                                      Text('${(pct * 100).toStringAsFixed(1)}% confidence', style: const TextStyle(fontSize: 12, color: Colors.black54)),
+                                      Text(
+                                          '${(pct * 100).toStringAsFixed(1)}% confidence',
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.black54)),
                                     ],
                                   );
                                 },
@@ -370,7 +418,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () async {
                           if (kIsWeb) {
                             if (!mounted) return;
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Camera not supported on web.')));
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('Camera not supported on web.')));
                             return;
                           }
                           await _pickImage(ImageSource.camera);
@@ -383,7 +434,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         icon: const Icon(Icons.photo_library),
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.black87,
-                        onPressed: () async => await _pickImage(ImageSource.gallery),
+                        onPressed: () async =>
+                            await _pickImage(ImageSource.gallery),
                       ),
                       const SizedBox(width: 16),
                       FloatingActionButton.extended(
@@ -395,7 +447,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           // Create a synthetic sample image (224x224) and run inference
                           try {
                             final int target = 224;
-                            final sample = img.Image(width: target, height: target);
+                            final sample =
+                                img.Image(width: target, height: target);
                             // fill with a green color that looks like a leaf
                             for (int y = 0; y < target; y++) {
                               for (int x = 0; x < target; x++) {
@@ -416,29 +469,36 @@ class _HomeScreenState extends State<HomeScreen> {
                             _result.value = null;
                             _confidence.value = null;
 
-                            final debug = await _tfliteService.runInferenceDebug(bytes);
+                            final debug =
+                                await _tfliteService.runInferenceDebug(bytes);
                             _lastDebug.value = debug;
                             if (debug != null) {
                               if (debug.containsKey('error')) {
                                 _result.value = 'Error: ${debug['error']}';
                                 _confidence.value = 0.0;
                               } else if (debug['topResults'] != null) {
-                                final topList = (debug['topResults'] as List<dynamic>);
+                                final topList =
+                                    (debug['topResults'] as List<dynamic>);
                                 if (topList.isNotEmpty) {
-                                  final first = topList.first as Map<dynamic, dynamic>;
-                                  final label = first.keys.first?.toString() ?? 'Unknown';
-                                  final score = (first.values.first as num).toDouble();
+                                  final first =
+                                      topList.first as Map<dynamic, dynamic>;
+                                  final label =
+                                      first.keys.first?.toString() ?? 'Unknown';
+                                  final score =
+                                      (first.values.first as num).toDouble();
                                   _result.value = label;
                                   _confidence.value = score;
                                 }
                               } else if (debug['topResult'] != null) {
-                                final top = (debug['topResult'] as Map<String, double>);
+                                final top =
+                                    (debug['topResult'] as Map<String, double>);
                                 if (top.isNotEmpty) {
                                   _result.value = top.keys.first;
                                   _confidence.value = top.values.first;
                                 }
                               } else {
-                                _result.value = 'Could not classify sample image.';
+                                _result.value =
+                                    'Could not classify sample image.';
                                 _confidence.value = 0.0;
                               }
                             }
@@ -460,32 +520,46 @@ class _HomeScreenState extends State<HomeScreen> {
                       if (debug == null) return const SizedBox.shrink();
                       final inputType = debug['inputType'] ?? '';
                       final inputShape = debug['inputShape']?.toString() ?? '';
-                      final outputShape = debug['outputShape']?.toString() ?? '';
+                      final outputShape =
+                          debug['outputShape']?.toString() ?? '';
                       final raw = debug['rawOutputs'] as List<dynamic>? ?? [];
                       final error = debug['error'] as String?;
                       return Card(
                         color: Colors.grey[50],
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         child: Padding(
                           padding: const EdgeInsets.all(12),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text('Debug', style: TextStyle(fontWeight: FontWeight.bold)),
+                              const Text('Debug',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
                               const SizedBox(height: 8),
-                              Text('Input: $inputType $inputShape', style: const TextStyle(fontSize: 12)),
+                              Text('Input: $inputType $inputShape',
+                                  style: const TextStyle(fontSize: 12)),
                               const SizedBox(height: 4),
-                              Text('Output shape: $outputShape', style: const TextStyle(fontSize: 12)),
+                              Text('Output shape: $outputShape',
+                                  style: const TextStyle(fontSize: 12)),
                               if (error != null) ...[
                                 const SizedBox(height: 6),
-                                Text('Error: $error', style: const TextStyle(fontSize: 12, color: Colors.red)),
+                                Text('Error: $error',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.red)),
                               ],
                               const SizedBox(height: 6),
-                              Text('Image sig: ${debug['imageSignature'] ?? ''}', style: const TextStyle(fontSize: 10, color: Colors.black45)),
+                              Text(
+                                  'Image sig: ${debug['imageSignature'] ?? ''}',
+                                  style: const TextStyle(
+                                      fontSize: 10, color: Colors.black45)),
                               const SizedBox(height: 8),
-                              Text('Raw outputs: ${raw.take(20).toList()}', style: const TextStyle(fontSize: 12)),
+                              Text('Raw outputs: ${raw.take(20).toList()}',
+                                  style: const TextStyle(fontSize: 12)),
                               const SizedBox(height: 6),
-                              Text('Labels: ${(debug['labels'] as List<dynamic>?)?.join(', ' ) ?? ''}', style: const TextStyle(fontSize: 12)),
+                              Text(
+                                  'Labels: ${(debug['labels'] as List<dynamic>?)?.join(', ') ?? ''}',
+                                  style: const TextStyle(fontSize: 12)),
                             ],
                           ),
                         ),

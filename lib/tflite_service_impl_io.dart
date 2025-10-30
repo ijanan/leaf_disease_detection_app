@@ -22,8 +22,10 @@ class TFLiteService {
       // model file is missing from the bundled assets. This will throw if the
       // asset isn't packaged.
       try {
-        final modelAsset = await rootBundle.load('assets/leaf_disease_efficientnetb0.tflite');
-        log('Model asset found, size=${modelAsset.lengthInBytes} bytes', name: 'TFLiteService');
+        final modelAsset =
+            await rootBundle.load('assets/leaf_disease_efficientnetb0.tflite');
+        log('Model asset found, size=${modelAsset.lengthInBytes} bytes',
+            name: 'TFLiteService');
       } catch (e) {
         log('Model asset check failed: $e', name: 'TFLiteService', level: 1000);
         // continue to let Interpreter.fromAsset throw a clearer error too
@@ -38,7 +40,8 @@ class TFLiteService {
           options: InterpreterOptions(),
         );
       } catch (e1) {
-        log('Interpreter.fromAsset("leaf_disease_efficientnetb0.tflite") failed: $e1', name: 'TFLiteService', level: 900);
+        log('Interpreter.fromAsset("leaf_disease_efficientnetb0.tflite") failed: $e1',
+            name: 'TFLiteService', level: 900);
         try {
           _interpreter = await Interpreter.fromAsset(
             'assets/leaf_disease_efficientnetb0.tflite',
@@ -46,7 +49,8 @@ class TFLiteService {
           );
         } catch (e2) {
           // Rethrow a combined error so the outer catch records it.
-          throw Exception('Interpreter.fromAsset failed for both keys: $e1 ; $e2');
+          throw Exception(
+              'Interpreter.fromAsset failed for both keys: $e1 ; $e2');
         }
       }
 
@@ -85,9 +89,10 @@ class TFLiteService {
     // Inspect input tensor type so we can prepare data in the expected dtype
     final inputTensor = _interpreter!.getInputTensor(0);
     final outputTensor = _interpreter!.getOutputTensor(0);
-  final outputShape = outputTensor.shape;
+    final outputShape = outputTensor.shape;
 
-    log('Running inference: inputType=${inputTensor.type}, inputShape=${inputTensor.shape}, outputShape=${outputShape}', name: 'TFLiteService');
+    log('Running inference: inputType=${inputTensor.type}, inputShape=${inputTensor.shape}, outputShape=${outputShape}',
+        name: 'TFLiteService');
 
     // Delegate to the debug-friendly runner and return the top result for
     // backwards compatibility.
@@ -95,7 +100,8 @@ class TFLiteService {
     if (debug == null) return null;
     if (debug.containsKey('error')) {
       // Respect errors returned by the debug runner.
-      log('Inference debug reported error: ${debug['error']}', name: 'TFLiteService', level: 900);
+      log('Inference debug reported error: ${debug['error']}',
+          name: 'TFLiteService', level: 900);
       return null;
     }
     final raw = debug['rawOutputs'] as List<double>?;
@@ -114,26 +120,32 @@ class TFLiteService {
     final inputTensor = _interpreter!.getInputTensor(0);
     final outputTensor = _interpreter!.getOutputTensor(0);
     final outputShape = outputTensor.shape;
-    final int numClasses = (outputShape.length == 1) ? outputShape[0] : outputShape[1];
+    final int numClasses =
+        (outputShape.length == 1) ? outputShape[0] : outputShape[1];
 
-    log('Running inference: inputType=${inputTensor.type}, inputShape=${inputTensor.shape}, outputShape=${outputShape}', name: 'TFLiteService');
+    log('Running inference: inputType=${inputTensor.type}, inputShape=${inputTensor.shape}, outputShape=${outputShape}',
+        name: 'TFLiteService');
 
     try {
       final sig = _imageSignature(imageBytes, 8);
       final inputTypeStr = inputTensor.type.toString().toLowerCase();
-      final isUint8 = inputTypeStr.contains('uint8') || inputTypeStr.contains('u8');
+      final isUint8 =
+          inputTypeStr.contains('uint8') || inputTypeStr.contains('u8');
       if (isUint8) {
-        final u8 = _preprocessImageAsUint8(imageBytes, inputTensor.shape[1], inputTensor.shape[2]);
+        final u8 = _preprocessImageAsUint8(
+            imageBytes, inputTensor.shape[1], inputTensor.shape[2]);
         if (u8 == null) return {'error': 'Failed to preprocess image as uint8'};
         final output = List.generate(1, (_) => List.filled(numClasses, 0.0));
-  // Wrap the typed buffer in a List to represent the batch dimension when
-  // passing to the interpreter. This is accepted by tflite_flutter.
-  _interpreter!.run([u8], output);
-        final results = (output[0] as List).map((e) => (e as num).toDouble()).toList();
+        // Wrap the typed buffer in a List to represent the batch dimension when
+        // passing to the interpreter. This is accepted by tflite_flutter.
+        _interpreter!.run([u8], output);
+        final results =
+            (output[0] as List).map((e) => (e as num).toDouble()).toList();
         // uint8 models often emit probabilities already; ensure we have
         // a probability vector (apply softmax if values don't sum to ~1).
         final probs = _maybeSoftmax(results);
-        log('Raw output (uint8 model) signature=$sig probs=$probs', name: 'TFLiteService');
+        log('Raw output (uint8 model) signature=$sig probs=$probs',
+            name: 'TFLiteService');
         return {
           'inputType': inputTensor.type.toString(),
           'inputShape': inputTensor.shape,
@@ -144,17 +156,24 @@ class TFLiteService {
           'imageSignature': sig,
         };
       } else {
-  // Prepare a typed Float32List flattened in NHWC order — this is more
-  // reliable with the interpreter than large nested Dart lists.
-  final input = await _preprocessImageAsFloat(imageBytes, inputTensor.shape[1], inputTensor.shape[2]);
-  if (input == null) return {'error': 'Failed to preprocess image as float (decode/convert failed)'};
+        // Prepare a typed Float32List flattened in NHWC order — this is more
+        // reliable with the interpreter than large nested Dart lists.
+        final input = await _preprocessImageAsFloat(
+            imageBytes, inputTensor.shape[1], inputTensor.shape[2]);
+        if (input == null)
+          return {
+            'error':
+                'Failed to preprocess image as float (decode/convert failed)'
+          };
         final output = List.generate(1, (_) => List.filled(numClasses, 0.0));
-  // Wrap the Float32List in a list to represent the batch dimension.
-  _interpreter!.run([input], output);
+        // Wrap the Float32List in a list to represent the batch dimension.
+        _interpreter!.run([input], output);
         // output may be List<List<double>>; ensure we cast to List<double>
-        final results = (output[0] as List).map((e) => (e as num).toDouble()).toList();
+        final results =
+            (output[0] as List).map((e) => (e as num).toDouble()).toList();
         final probs = _maybeSoftmax(results);
-        log('Raw output (float model) signature=$sig probs=$probs', name: 'TFLiteService');
+        log('Raw output (float model) signature=$sig probs=$probs',
+            name: 'TFLiteService');
         return {
           'inputType': inputTensor.type.toString(),
           'inputShape': inputTensor.shape,
@@ -172,7 +191,8 @@ class TFLiteService {
   }
 
   // Prepare Uint8List input flattened in NHWC order
-  Uint8List? _preprocessImageAsUint8(Uint8List imageBytes, int targetH, int targetW) {
+  Uint8List? _preprocessImageAsUint8(
+      Uint8List imageBytes, int targetH, int targetW) {
     try {
       final image = img.decodeImage(imageBytes);
       if (image == null) return null;
@@ -191,13 +211,15 @@ class TFLiteService {
       // Return as a flattened list wrapped in an outer list to match interpreter input
       return out;
     } catch (e) {
-      log('Error preprocessing uint8 image: $e', name: 'TFLiteService', level: 1000);
+      log('Error preprocessing uint8 image: $e',
+          name: 'TFLiteService', level: 1000);
       return null;
     }
   }
 
   // Prepare a flattened Float32List in NHWC order normalized to 0..1
-  Future<Float32List?> _preprocessImageAsFloat(Uint8List imageBytes, int targetH, int targetW) async {
+  Future<Float32List?> _preprocessImageAsFloat(
+      Uint8List imageBytes, int targetH, int targetW) async {
     try {
       // First attempt: decode with package:image
       img.Image? image = img.decodeImage(imageBytes);
@@ -220,14 +242,17 @@ class TFLiteService {
             final recorder = ui.PictureRecorder();
             final canvas = ui.Canvas(recorder);
             final paint = ui.Paint();
-            final srcRect = ui.Rect.fromLTWH(0, 0, decoded.width.toDouble(), decoded.height.toDouble());
-            final dstRect = ui.Rect.fromLTWH(0, 0, targetW.toDouble(), targetH.toDouble());
+            final srcRect = ui.Rect.fromLTWH(
+                0, 0, decoded.width.toDouble(), decoded.height.toDouble());
+            final dstRect =
+                ui.Rect.fromLTWH(0, 0, targetW.toDouble(), targetH.toDouble());
             canvas.drawImageRect(decoded, srcRect, dstRect, paint);
             final picture = recorder.endRecording();
             resizedUiImage = await picture.toImage(targetW, targetH);
           }
 
-          final byteData = await resizedUiImage.toByteData(format: ui.ImageByteFormat.rawRgba);
+          final byteData = await resizedUiImage.toByteData(
+              format: ui.ImageByteFormat.rawRgba);
           if (byteData == null) return null;
           final bytes = byteData.buffer.asUint8List();
 
@@ -243,7 +268,8 @@ class TFLiteService {
           }
           return out;
         } catch (e, st) {
-          log('decodeImageFromList fallback failed, trying instantiateImageCodec: $e\n$st', name: 'TFLiteService', level: 900);
+          log('decodeImageFromList fallback failed, trying instantiateImageCodec: $e\n$st',
+              name: 'TFLiteService', level: 900);
           // Try instantiateImageCodec as a final fallback
           try {
             final codec = await ui.instantiateImageCodec(
@@ -253,7 +279,8 @@ class TFLiteService {
             );
             final frame = await codec.getNextFrame();
             final uiImage = frame.image;
-            final byteData = await uiImage.toByteData(format: ui.ImageByteFormat.rawRgba);
+            final byteData =
+                await uiImage.toByteData(format: ui.ImageByteFormat.rawRgba);
             if (byteData == null) return null;
             final bytes = byteData.buffer.asUint8List();
 
@@ -269,7 +296,8 @@ class TFLiteService {
             }
             return out;
           } catch (e2, st2) {
-            log('Fallback decode+resize failed entirely: $e2\n$st2', name: 'TFLiteService', level: 1000);
+            log('Fallback decode+resize failed entirely: $e2\n$st2',
+                name: 'TFLiteService', level: 1000);
             return null;
           }
         }
@@ -293,7 +321,8 @@ class TFLiteService {
       }
       return out;
     } catch (e, st) {
-      log('Error preprocessing float image: $e\n$st', name: 'TFLiteService', level: 1000);
+      log('Error preprocessing float image: $e\n$st',
+          name: 'TFLiteService', level: 1000);
       return null;
     }
   }
@@ -340,7 +369,8 @@ class TFLiteService {
     final out = <Map<String, double>>[];
     for (int i = 0; i < take; i++) {
       final idx = indexed[i];
-      final label = (idx < (_labels?.length ?? 0)) ? _labels![idx].trim() : 'class_$idx';
+      final label =
+          (idx < (_labels?.length ?? 0)) ? _labels![idx].trim() : 'class_$idx';
       out.add({label: probs[idx]});
     }
     return out;
