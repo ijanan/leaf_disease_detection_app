@@ -89,8 +89,8 @@ class TFLiteServiceImplIO {
 
       // 4️⃣ Process results
       final scores = List<double>.from(output[0]);
-      final maxIdx = scores.indexWhere(
-          (v) => v == scores.reduce((a, b) => a > b ? a : b));
+      final maxIdx =
+          scores.indexWhere((v) => v == scores.reduce((a, b) => a > b ? a : b));
       final label = _labels != null && maxIdx < _labels!.length
           ? _labels![maxIdx]
           : 'Unknown';
@@ -99,13 +99,13 @@ class TFLiteServiceImplIO {
       // Sort results for debug
       final results = List.generate(scores.length, (i) {
         return {
-          'label': _labels != null && i < _labels!.length
-              ? _labels![i]
-              : 'Class $i',
+          'label':
+              _labels != null && i < _labels!.length ? _labels![i] : 'Class $i',
           'score': scores[i],
         };
       });
-      results.sort((a, b) => (b['score'] as double).compareTo(a['score'] as double));
+      results.sort(
+          (a, b) => (b['score'] as double).compareTo(a['score'] as double));
 
       return {
         'results': results,
