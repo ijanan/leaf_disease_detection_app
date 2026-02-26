@@ -54,12 +54,12 @@ jobs:
              [ -n "$ANDROID_KEYSTORE_PASSWORD" ] && \
              [ -n "$ANDROID_KEY_ALIAS" ] && \
              [ -n "$ANDROID_KEY_PASSWORD" ]; then
-            cat > android/key.properties <<EOF
-            storePassword=$ANDROID_KEYSTORE_PASSWORD
-            keyPassword=$ANDROID_KEY_PASSWORD
-            keyAlias=$ANDROID_KEY_ALIAS
-            storeFile=release.jks
-            EOF
+            printf '%s\n' \
+              "storePassword=$ANDROID_KEYSTORE_PASSWORD" \
+              "keyPassword=$ANDROID_KEY_PASSWORD" \
+              "keyAlias=$ANDROID_KEY_ALIAS" \
+              "storeFile=release.jks" \
+              > android/key.properties
           else
             echo "Signing secrets not provided (or incomplete); building without release signing."
           fi
