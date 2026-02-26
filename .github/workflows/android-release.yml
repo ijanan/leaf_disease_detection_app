@@ -3,8 +3,13 @@ name: Android Release APK
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag name to release (e.g., v1.0.2). Leave empty when running from a tag push.'
+        required: false
+        type: string
 
 permissions:
   contents: write
@@ -12,6 +17,9 @@ permissions:
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    concurrency:
+      group: android-release-${{ github.ref }}
+      cancel-in-progress: true
 
     steps:
       - name: Checkout
@@ -59,8 +67,24 @@ jobs:
       - name: Build release APK
         run: flutter build apk --release
 
-      - name: Create GitHub Release and upload APK
-        uses: softprops/action-gh-release@v2
+      - name: Verify APK exists
+        run: |
+          ls -la build/app/outputs/flutter-apk
+          test -f build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload APK (Actions artifact)
+        uses: actions/upload-artifact@v4
         with:
-          files: build/app/outputs/flutter-apk/app-release.apk
-          generate_release_notes: true
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Create/Update GitHub Release and upload APK
+        if: ${{ startsWith(github.ref, 'refs/tags/') || inputs.tag != '' }}
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ inputs.tag != '' && inputs.tag || github.ref_name }}
+          generateReleaseNotes: true
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: build/app/outputs/flutter-apk/app-release.apk
