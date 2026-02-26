@@ -1,97 +1,54 @@
-name: Android Release APK
+name: Build and Release
 
 on:
+  pull_request:
+    branches:
+      - junayed
+      - data
   push:
-    tags:
-      - 'v*'
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: 'Tag name to release (e.g., v1.0.4). Leave empty when running from a tag push.'
-        required: false
-        type: string
+    branches:
+      - junayed
+      - data
 
 permissions:
   contents: write
 
 jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
+  build:
+    name: Build & Release
+    runs-on: windows-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Java
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+      - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.35.2'
           channel: stable
           cache: true
 
-      - name: Flutter pub get
-        run: flutter pub get
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter build apk --release --split-per-abi
 
-      - name: Optional signing material
-        env:
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          set -e
-          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
-            echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.jks
-          fi
-
-          if [ -f android/app/release.jks ] && \
-             [ -n "$ANDROID_KEYSTORE_PASSWORD" ] && \
-             [ -n "$ANDROID_KEY_ALIAS" ] && \
-             [ -n "$ANDROID_KEY_PASSWORD" ]; then
-            printf '%s\n' \
-              "storePassword=$ANDROID_KEYSTORE_PASSWORD" \
-              "keyPassword=$ANDROID_KEY_PASSWORD" \
-              "keyAlias=$ANDROID_KEY_ALIAS" \
-              "storeFile=release.jks" \
-              > android/key.properties
-          else
-            echo "Signing secrets not provided (or incomplete); building without release signing."
-          fi
-
-      - name: Build release APK
-        run: flutter build apk --release
-
-      - name: Upload APK (Actions artifact)
+      - name: Upload APKs (Actions artifact)
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: apks
+          path: build/app/outputs/flutter-apk/*.apk
           if-no-files-found: error
 
-      - name: Publish GitHub Release (tag push)
-        if: ${{ startsWith(github.ref, 'refs/tags/') }}
+      - name: Push to Release
+        if: ${{ github.event_name == 'push' }}
         uses: ncipollo/release-action@v1
         with:
+          artifacts: build/app/outputs/flutter-apk/*.apk
+          tag: v1.0.${{ github.run_number }}
           token: ${{ github.token }}
-          tag: ${{ github.ref_name }}
-          generateReleaseNotes: true
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: build/app/outputs/flutter-apk/app-release.apk
-
-      - name: Publish GitHub Release (manual)
-        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.tag != '' }}
-        uses: ncipollo/release-action@v1
-        with:
-          token: ${{ github.token }}
-          tag: ${{ github.event.inputs.tag }}
-          generateReleaseNotes: true
-          allowUpdates: true
-          replacesArtifacts: true
-          artifacts: build/app/outputs/flutter-apk/app-release.apk
