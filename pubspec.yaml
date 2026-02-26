@@ -2,6 +2,10 @@ name: leaf_disease_detection_app
 description: A Flutter app for leaf disease detection.
 publish_to: "none"
 
+# Version format: x.y.z+buildNumber
+# Android: versionName=x.y.z, versionCode=buildNumber
+version: 1.0.0+1
+
 environment:
   sdk: ">=2.18.0 <4.0.0"
   flutter: ">=3.0.0"

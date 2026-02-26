@@ -556,8 +556,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ValueListenableBuilder<double?>(
                                     valueListenable: _confidence,
                                     builder: (context, conf, _) {
-                                      if (conf == null)
+                                      if (conf == null) {
                                         return const SizedBox.shrink();
+                                      }
                                       final pct = (conf * 100)
                                           .clamp(0, 100)
                                           .toStringAsFixed(1);
