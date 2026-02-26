@@ -39,8 +39,22 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      - name: Verify lockfile unchanged
+        run: git diff --exit-code pubspec.lock
+
+      - name: Show resolved google_fonts version
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "Resolved google_fonts stanza from pubspec.lock:" 
+          awk '
+            /^  google_fonts:$/ {p=1; start=NR}
+            p {print NR ":" $0}
+            p && NR>start && /^  [a-zA-Z0-9_]+:$/ {exit}
+          ' pubspec.lock
+
       - name: Build release APK
-        run: flutter build apk --release
+        run: flutter build apk --release -v
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
