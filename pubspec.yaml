@@ -14,7 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  google_fonts: ^4.0.3
+  google_fonts: ">=6.0.0 <8.0.0"
   image_picker: ^0.8.7+6
   image: ^3.0.0
   # Use a tflite_flutter compatible with Dart 3.9 / Flutter 3.35
