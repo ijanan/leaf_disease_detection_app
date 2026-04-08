@@ -29,4 +29,10 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-![alt text](image.png)
+
+## Screenshots
+
+<p align="center">
+	<img src="image.png" width="240" alt="Leaf disease detection – home" />
+	<img src="image-1.png" width="240" alt="Leaf disease detection – result" />
+</p>
