@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image/image.dart' as img;
 
-import 'tflite_service_impl_io.dart';
+import 'service_impl.dart';
 
 const bool kIsFlutterTest = bool.fromEnvironment('FLUTTER_TEST');
 
