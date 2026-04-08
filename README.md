@@ -1,34 +1,70 @@
-# leaf_disease_detection_app
+# Leaf Disease Detection App (Flutter)
 
-A Flutter app for leaf disease detection.
+An on-device Flutter app that classifies leaf diseases from an image using a TensorFlow Lite model.
 
-## Download APK from GitHub
+## Features
 
-This repo includes a GitHub Actions workflow that builds a **release APK** and makes it downloadable:
+- Pick an image from **Gallery** or capture from **Camera**
+- Runs inference **offline/on-device** using `tflite_flutter`
+- Shows the **top prediction** and a **confidence score**
+- Includes a simple "leaf-likeness" check (green-ish heuristic) to reduce obvious non-leaf inputs
 
-- **Actions artifact**: Every run uploads `app-release.apk` as an artifact in the workflow run page.
-- **GitHub Release asset**: When you push a tag like `v1.0.0`, the workflow creates a GitHub Release and attaches the APK.
+## Model & Assets
 
-### Create a Release APK on GitHub
+The app loads the model and labels from Flutter assets:
 
-1. Create a version tag:
-	- `git tag v1.0.0`
-	- `git push origin v1.0.0`
-2. Wait for the workflow **Build Android APK** to finish.
-3. Download the APK from the **Releases** page (or from the workflow run artifacts).
+- `assets/leaf_disease_efficientnetb0.tflite`
+- `assets/labels.txt`
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+## Requirements
 
-A few resources to get you started if this is your first Flutter project:
+- Flutter SDK (project is compatible with Flutter 3.x; tested with Flutter 3.35)
+- Android Studio / VSCode
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Note: This project uses `dart:io` for temporary files, so it is not set up to run on Flutter Web.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Run Locally
+
+```bash
+flutter pub get
+flutter run
+```
+
+## Build an APK Locally (Android)
+
+```bash
+flutter build apk --release
+```
+
+The output APK is typically located at:
+
+`build/app/outputs/flutter-apk/app-release.apk`
+
+## Download / Release APK from GitHub
+
+This repo includes a GitHub Actions workflow that can build a **release APK** and make it downloadable:
+
+- **Actions artifact**: each run uploads `app-release.apk` as an artifact
+- **GitHub Release asset**: pushing a tag like `v1.0.0` creates a GitHub Release and attaches the APK
+
+Create a release by pushing a tag:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+For signing setup (keystore + GitHub secrets), see `RELEASE.md`.
+
+## Permissions
+
+The app requests runtime permissions when needed:
+
+- Camera access (for taking photos)
+- Photos/Storage access (for selecting from gallery)
+
+If permissions are permanently denied, the app will prompt opening the system app settings.
 
 ## Screenshots
 
